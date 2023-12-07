@@ -5,8 +5,9 @@ def create_table():
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS Todos (
-            id INTEGER PRIMARY KEY, 
-            task text, 
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title text, 
+            description text, 
             status text)''')
     conn.commit()
     conn.close()
@@ -19,17 +20,17 @@ def fetch_todos():
     conn.close()
     return todos
 
-def add_todo(id, task, status):
+def add_todo(title, description, status):
     conn = sqlite3.connect('todo.db')
     c = conn.cursor()
-    c.execute('INSERT INTO Todos (id, task, status) VALUES (?, ?, ?)', (id, task, status))
+    c.execute('INSERT INTO Todos (title, description, status) VALUES (?, ?, ?)', (title, description, status))
     conn.commit()
     conn.close()
 
-def update_todo(id, new_task, new_status):
+def update_todo(id, new_title, new_description, new_status):
     conn = sqlite3.connect('todo.db')
     c = conn.cursor()
-    c.execute('UPDATE Todos SET task = ?, status = ? WHERE id = ?', (new_task, new_status, id))
+    c.execute('UPDATE Todos SET title = ?, description = ?, status = ? WHERE id = ?', (new_title, new_description, new_status, id))
     conn.commit()
     conn.close()
 
