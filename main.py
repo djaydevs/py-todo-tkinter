@@ -44,4 +44,8 @@ addTaskBtn = CTkButton(
 )
 addTaskBtn.place(x=10, y=10)
 
+#uncomment the following line of code if the treeview is created
+#tree.bind('ButtonRelease', func.show_task)
+func.show_treeview()
+
 app.mainloop()

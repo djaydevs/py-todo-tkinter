@@ -49,4 +49,12 @@ def id_exists(id):
     conn.close()
     return todo[0] > 0
 
+def search_todos(keyword):
+    conn = sqlite3.connect('todo.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM Todos WHERE title LIKE ? OR description LIKE ?', ('%' + keyword + '%', '%' + keyword + '%'))
+    todos = c.fetchall()
+    conn.close()
+    return todos
+
 create_table()
