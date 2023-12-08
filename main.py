@@ -9,14 +9,14 @@ from tkinter import Listbox
 import db
 import func
 
-light = '#f8fdf7'
+light = '#ddfddd'
 light2 = '#e0e0e0'
 dark = '#030802'
-dark2 = '#020d0a'
-primary = '#2bdeae'
-secondary = '#83c2ec'
-accent = '#608de6'
-destructive = '#e15b5b'
+dark2 = '#010e01'
+primary = '#12da0b'
+secondary = '#076c83'
+accent = '#094eae'
+destructive = '#ae0808'
 
 app = CTk()
 app.title('Todo App')
@@ -32,6 +32,8 @@ font12 = ('Arial', 12)
 font12_bold = ('Arial', 12, 'bold')
 
 plus_icon = PILImage.open('assets/plus-circle.png')
+pencil_icon = PILImage.open('assets/pencil.png')
+x_icon = PILImage.open('assets/x-circle.png')
 
 titleLabel = CTkLabel(app, text="Todo Application", font=font20_bold)
 titleLabel.pack(anchor='c', pady=5, padx=10, fill='x')
@@ -133,6 +135,43 @@ taskList = Listbox(
 listLabel.pack(anchor='w', padx=15, pady=(10, 5))
 searchEntry.pack(anchor='w', padx=15, pady=(0, 10), fill='x')
 taskList.pack(anchor='w', padx=15, pady=(0, 10), fill='both', expand=True)
+
+btnFrame = CTkFrame(listFrame, fg_color='transparent', corner_radius=20)
+btnFrame.pack(anchor='c', expand=False)
+
+editTaskBtn = CTkButton(
+    btnFrame,
+    height=40,
+    font=font14_bold,
+    text_color=light,
+    text="Edit Task",
+    fg_color=secondary,
+    hover_color=accent,
+    cursor='hand2',
+    corner_radius=32,
+    image=CTkImage(dark_image=pencil_icon, light_image=pencil_icon),
+    command=func.add_task,
+)
+deleteTaskBtn = CTkButton(
+    btnFrame,
+    height=40,
+    font=font14_bold,
+    text_color=light,
+    text="Delete Task",
+    fg_color=destructive,
+    hover_color=accent,
+    cursor='hand2',
+    corner_radius=32,
+    image=CTkImage(dark_image=x_icon, light_image=x_icon),
+    command=func.add_task,
+)
+
+editTaskBtn.grid(row=0, column=0, sticky='nsew', padx=(10, 0), pady=10)
+deleteTaskBtn.grid(row=0, column=1, sticky='nsew', padx=10, pady=10)
+
+btnFrame.grid_columnconfigure(0, weight=1)
+btnFrame.grid_columnconfigure(1, weight=1)
+btnFrame.grid_rowconfigure(0, weight=0)
 
 mainFrame.grid_columnconfigure(0, weight=1)
 mainFrame.grid_columnconfigure(1, weight=6)
