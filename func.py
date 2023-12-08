@@ -2,88 +2,99 @@ import db
 from customtkinter import *
 from tkinter import messagebox
 
-# Function to display tasks in the Treeview widget
-def show_treeview():
-    task = db.fetch_todos()
-    tree.delete(*tree.get_children)
-    for todo in task:
-        tree.insert('', END, values=todo)
-
 # Function to add a new task
-def add_task():
-    title_value = title_entry.get()
-    description_value = description_entry.get()
-    status_value = status_entry.get()
+def add_task(title, description, status, taskList):
+    title_value = title.get()
+    description_value = description.get("1.0", 'end-1c')  # Get text from the textbox
+    status_value = status.get()
 
     if not (title_value and description_value and status_value):
         messagebox.showerror('Error', "Enter all fields")
     else:
         db.add_todo(title_value, description_value, status_value)
-        show_treeview()
-        clear_task()
-        messagebox.showerror("Success", "To do have been added")
+        show_listbox(taskList)
+        clear_task(title, description, status, taskList)
+        messagebox.showinfo("Success", "To do have been added")
 
+        todos = db.fetch_todos()
+        for todo in todos:
+            print(todo)
     print("Add Task button clicked")
 
-# Function to update an existing task
-def update_task():
-    selected_task = tree.focus()
-    if not selected_task:
+# Function to clear the input fields and selection in the Treeview
+def clear_task(title, description, status, taskList):
+    title.delete(0, 'end')
+    description.delete("1.0", 'end')  
+    status.set('')
+    show_listbox(taskList)
+
+def update_task(taskList, titleEntry, descriptionTextBox, statusCombobox):
+    selected_index = taskList.curselection()
+    
+    if not selected_index:
         messagebox.showerror('Error', "Please select a task to update.")
     else:
-        id_value = id_entry.get()
-        title_value = title_entry.get()
-        description_value = description_entry.get()
-        status_value = status_entry.get()
-        db.update_todo(title_value, description_value, status_value, id_value)
-        show_treeview()
-        clear_task()
+        selected_item = taskList.get(selected_index)
+        id = selected_item[0]  
+
+        new_title = titleEntry.get()
+        new_description = descriptionTextBox.get("1.0", 'end-1c')
+        new_status = statusCombobox.get()
+
+        db.update_todo(new_title, new_description, new_status, id)
+        clear_task(titleEntry, descriptionTextBox, statusCombobox, taskList)
+        show_listbox(taskList)
         messagebox.showinfo("Success", "Task updated successfully.")
-    print("Update Task button clicked")
 
 # Function to delete an existing task
-def delete_task():
-    selected_task = tree.focus()
-    if not selected_task:
+def delete_task(title, description, status, taskList):
+    selected_index = taskList.curselection()
+    if not selected_index:
         messagebox.showerror('Error', "Please select a task to delete.")
     else:
-        id_value = id_entry.get()
-        db.delete_todo(id_value)
-        show_treeview()
-        clear_task()
+        selected_item = taskList.get(selected_index)
+        id = selected_item[0]  # Get the ID from the tuple
+        print(f"Selected id: {id}") 
+        db.delete_todo(id)
+        show_listbox(taskList)
+        clear_task(title, description, status, taskList)
         messagebox.showinfo("Success", "Task deleted successfully.")
     print("Delete Task button clicked")
 
-# Function to clear the input fields and selection in the Treeview
-def clear_task(*clicked):
-    if clicked:
-        tree.selection_remove(tree.focus())
-        tree.focus("")
-    title_entry.delete(0, END)
-    description_entry.delete(0, END)
-    status_entry.delete(0, END)
-
 # Function to display the details of a selected task
-def show_task():
-    selected_task = tree.focus()
-    if selected_task: 
-        row = tree.item(selected_task)['values']
-        clear_task()
-        title_entry.insert(0, row[0])
-        description_entry.insert(0, row[1])
-        status_entry.insert(0, row[2])
-    else:
-        pass
+def on_listbox_select(event, titleEntry, descriptionTextBox, statusCombobox):
+    listbox = event.widget
+    selected_index = listbox.curselection()
 
-def search_task():
-    keyword = search_entry.get()
+    if selected_index:
+        selected_item = listbox.get(selected_index)
+
+        titleEntry.delete(0, END)
+        descriptionTextBox.delete('1.0', END)
+        statusCombobox.set('')
+
+        titleEntry.insert(END, selected_item[1])  
+        descriptionTextBox.insert(END, selected_item[2])  
+        statusCombobox.set(selected_item[3])  
+
+# Function to search for a task
+def search_task(taskList, searchEntry):
+    keyword = searchEntry.get()
     if not keyword:
         messagebox.showerror('Error', "Enter a keyword to search.")
         return
-    results = db.search_todos(keyword)
-    tree.delete(*tree.get_children())
-    if not results:
-        messagebox.showinfo("Search Results", "No matching tasks found.")
-    else:
-        for todo in results:
-            tree.insert('', END, values=todo)
+
+    all_items = taskList.get(0, 'end')
+    taskList.delete(0, 'end')
+
+    for item in all_items:
+        item_str = item[0]  # Consider only the title
+        if keyword.lower() in item_str.lower():
+            taskList.insert('end', item)
+
+# Function to display tasks in the Listbox widget
+def show_listbox(listbox):
+    todos = db.fetch_todos()
+    listbox.delete(0, END) 
+    for todo in todos:
+        listbox.insert(END, (todo)) 

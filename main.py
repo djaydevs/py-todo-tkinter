@@ -95,7 +95,7 @@ saveTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=plus_icon, light_image=plus_icon),
-    command=func.add_task,
+    command=lambda: func.add_task(titleEntry, descriptionTextBox, statusCombobox, taskList)
 )
 
 addLabel.pack(anchor='w', padx=15, pady=(10, 5))
@@ -134,6 +134,7 @@ taskList = Listbox(
 
 listLabel.pack(anchor='w', padx=15, pady=(10, 5))
 searchEntry.pack(anchor='w', padx=15, pady=(0, 10), fill='x')
+searchEntry.bind('<Return>', lambda event: func.search_task(taskList, searchEntry))
 taskList.pack(anchor='w', padx=15, pady=(0, 10), fill='both', expand=True)
 
 btnFrame = CTkFrame(listFrame, fg_color='transparent', corner_radius=20)
@@ -150,7 +151,7 @@ editTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=pencil_icon, light_image=pencil_icon),
-    command=func.add_task,
+    command=lambda: func.update_task(taskList, titleEntry, descriptionTextBox, statusCombobox)
 )
 deleteTaskBtn = CTkButton(
     btnFrame,
@@ -163,7 +164,7 @@ deleteTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=x_icon, light_image=x_icon),
-    command=func.add_task,
+    command=lambda: func.delete_task(titleEntry, descriptionTextBox, statusCombobox, taskList)
 )
 
 editTaskBtn.grid(row=0, column=0, sticky='nsew', padx=(10, 0), pady=10)
@@ -177,8 +178,7 @@ mainFrame.grid_columnconfigure(0, weight=1)
 mainFrame.grid_columnconfigure(1, weight=6)
 mainFrame.grid_rowconfigure(0, weight=1)
 
-#uncomment the following line of code if the treeview is created
-#tree.bind('ButtonRelease', func.show_task)
-# func.show_treeview()
+taskList.bind('<<ListboxSelect>>', lambda event: func.on_listbox_select(event, titleEntry, descriptionTextBox, statusCombobox)) 
+func.show_listbox(taskList)
 
 app.mainloop()
