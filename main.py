@@ -95,7 +95,7 @@ saveTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=plus_icon, light_image=plus_icon),
-    # command=lambda: func.add_task(titleEntry, descriptionTextBox, statusCombobox, tree)
+    command=lambda: func.add_task(titleEntry, descriptionTextBox, statusCombobox, tree)
 )
 
 addLabel.pack(anchor='w', padx=15, pady=(10, 5))
@@ -120,7 +120,7 @@ searchEntry = CTkEntry(
     border_width=0,
     corner_radius=15,
 )
-# taskList = Listbox(
+# tree = Listbox(
 #     listFrame,
 #     # yscrollcommand = scrollbar.set,
 #     font=font12, 
@@ -140,17 +140,17 @@ style.map('Treeview', background=[('selected', primary)], foreground=[('selected
 
 tree = ttk.Treeview(listFrame, height=15)
 
-tree['columns'] = ('ID', 'Title', 'Status', 'Description')
+tree['columns'] = ('ID', 'Title', 'Description', 'Status')
 tree.column('#0', width=0, stretch=tk.NO)
 tree.column('ID', anchor=tk.CENTER, width=50)
 tree.column('Title', anchor=tk.CENTER, width=200)
-tree.column('Status', anchor=tk.CENTER, width=100)
 tree.column('Description', anchor=tk.CENTER, width=300)
+tree.column('Status', anchor=tk.CENTER, width=100)
 
 tree.heading('ID', text='ID')
 tree.heading('Title', text='Title')
-tree.heading('Status', text='Status')
 tree.heading('Description', text='Description')
+tree.heading('Status', text='Status')
 
 listLabel.pack(anchor='w', padx=15, pady=(10, 5))
 searchEntry.pack(anchor='w', padx=15, pady=(0, 10), fill='x')
@@ -171,7 +171,7 @@ editTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=pencil_icon, light_image=pencil_icon),
-    # command=lambda: func.update_task(tree, titleEntry, descriptionTextBox, statusCombobox)
+    command=lambda: func.update_task(tree, titleEntry, descriptionTextBox, statusCombobox)
 )
 deleteTaskBtn = CTkButton(
     btnFrame,
@@ -184,7 +184,7 @@ deleteTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=x_icon, light_image=x_icon),
-    # command=lambda: func.delete_task(titleEntry, descriptionTextBox, statusCombobox, tree)
+    command=lambda: func.delete_task(titleEntry, descriptionTextBox, statusCombobox, tree)
 )
 
 editTaskBtn.grid(row=0, column=0, sticky='nsew', padx=(10, 0), pady=10)
@@ -198,7 +198,8 @@ mainFrame.grid_columnconfigure(0, weight=1)
 mainFrame.grid_columnconfigure(1, weight=6)
 mainFrame.grid_rowconfigure(0, weight=1)
 
-# tree.bind('<<ListboxSelect>>', lambda event: func.on_listbox_select(event, titleEntry, descriptionTextBox, statusCombobox)) 
-# func.show_listbox(tree)
+tree.bind('<<TreeviewSelect>>', lambda event: func.on_treeview_select(event, titleEntry, descriptionTextBox, statusCombobox))
+searchEntry.bind('<KeyRelease>', lambda event: func.on_search_entry_key_release(event, tree, searchEntry))
+func.show_treeview(tree)
 
 app.mainloop()
