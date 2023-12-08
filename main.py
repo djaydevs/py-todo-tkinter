@@ -95,7 +95,7 @@ saveTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=plus_icon, light_image=plus_icon),
-    command=lambda: func.add_task(titleEntry, descriptionTextBox, statusCombobox, taskList)
+    # command=lambda: func.add_task(titleEntry, descriptionTextBox, statusCombobox, tree)
 )
 
 addLabel.pack(anchor='w', padx=15, pady=(10, 5))
@@ -120,23 +120,42 @@ searchEntry = CTkEntry(
     border_width=0,
     corner_radius=15,
 )
-taskList = Listbox(
-    listFrame,
-    # yscrollcommand = scrollbar.set,
-    font=font12, 
-    fg=dark, 
-    borderwidth=0, 
-    highlightthickness=0, 
-    selectbackground=primary, 
-    selectforeground=light,
-    activestyle='none', 
-    cursor='hand2',
-)
+# taskList = Listbox(
+#     listFrame,
+#     # yscrollcommand = scrollbar.set,
+#     font=font12, 
+#     fg=dark, 
+#     borderwidth=0, 
+#     highlightthickness=0, 
+#     selectbackground=primary, 
+#     selectforeground=light,
+#     activestyle='none', 
+#     cursor='hand2',
+# )
+
+style = ttk.Style(listFrame)
+style.theme_use('clam')
+style.configure('Treeview', font=font12, foreground=dark, background=light, fieldbackground=light)
+style.map('Treeview', background=[('selected', primary)], foreground=[('selected', light)])
+
+tree = ttk.Treeview(listFrame, height=15)
+
+tree['columns'] = ('ID', 'Title', 'Status', 'Description')
+tree.column('#0', width=0, stretch=tk.NO)
+tree.column('ID', anchor=tk.CENTER, width=50)
+tree.column('Title', anchor=tk.CENTER, width=200)
+tree.column('Status', anchor=tk.CENTER, width=100)
+tree.column('Description', anchor=tk.CENTER, width=300)
+
+tree.heading('ID', text='ID')
+tree.heading('Title', text='Title')
+tree.heading('Status', text='Status')
+tree.heading('Description', text='Description')
 
 listLabel.pack(anchor='w', padx=15, pady=(10, 5))
 searchEntry.pack(anchor='w', padx=15, pady=(0, 10), fill='x')
-searchEntry.bind('<Return>', lambda event: func.search_task(taskList, searchEntry))
-taskList.pack(anchor='w', padx=15, pady=(0, 10), fill='both', expand=True)
+searchEntry.bind('<Return>', lambda event: func.search_task(tree, searchEntry))
+tree.pack(anchor='w', padx=15, pady=(0, 10), fill='both', expand=True)
 
 btnFrame = CTkFrame(listFrame, fg_color='transparent', corner_radius=20)
 btnFrame.pack(anchor='c', expand=False)
@@ -152,7 +171,7 @@ editTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=pencil_icon, light_image=pencil_icon),
-    command=lambda: func.update_task(taskList, titleEntry, descriptionTextBox, statusCombobox)
+    # command=lambda: func.update_task(tree, titleEntry, descriptionTextBox, statusCombobox)
 )
 deleteTaskBtn = CTkButton(
     btnFrame,
@@ -165,7 +184,7 @@ deleteTaskBtn = CTkButton(
     cursor='hand2',
     corner_radius=32,
     image=CTkImage(dark_image=x_icon, light_image=x_icon),
-    command=lambda: func.delete_task(titleEntry, descriptionTextBox, statusCombobox, taskList)
+    # command=lambda: func.delete_task(titleEntry, descriptionTextBox, statusCombobox, tree)
 )
 
 editTaskBtn.grid(row=0, column=0, sticky='nsew', padx=(10, 0), pady=10)
@@ -179,7 +198,7 @@ mainFrame.grid_columnconfigure(0, weight=1)
 mainFrame.grid_columnconfigure(1, weight=6)
 mainFrame.grid_rowconfigure(0, weight=1)
 
-taskList.bind('<<ListboxSelect>>', lambda event: func.on_listbox_select(event, titleEntry, descriptionTextBox, statusCombobox)) 
-func.show_listbox(taskList)
+# tree.bind('<<ListboxSelect>>', lambda event: func.on_listbox_select(event, titleEntry, descriptionTextBox, statusCombobox)) 
+# func.show_listbox(tree)
 
 app.mainloop()
