@@ -88,7 +88,7 @@ def search_task(taskList, searchEntry):
     taskList.delete(0, 'end')
 
     for item in all_items:
-        item_str = item[0]  # Consider only the title
+        item_str = item[1]  # Consider the title, not the id
         if keyword.lower() in item_str.lower():
             taskList.insert('end', item)
 
