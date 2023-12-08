@@ -122,12 +122,13 @@ searchEntry = CTkEntry(
 )
 taskList = Listbox(
     listFrame,
+    # yscrollcommand = scrollbar.set,
     font=font12, 
-    fg=light, 
+    fg=dark, 
     borderwidth=0, 
     highlightthickness=0, 
     selectbackground=primary, 
-    selectforeground=light, 
+    selectforeground=light,
     activestyle='none', 
     cursor='hand2',
 )
